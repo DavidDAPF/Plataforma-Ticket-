@@ -1,0 +1,13 @@
+@import "tailwindcss/base"; 
+@import "tailwindcss/components"; 
+@import "tailwindcss/utilities";
+
+/* Asegurarse de que el body ocupe todo el espacio disponible */
+body {
+  @apply min-h-screen bg-gray-100;
+}
+
+/* Estilos adicionales globales */
+.container {
+  @apply mx-auto p-4;
+}
