@@ -1,7 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import Ticket from '../models/ticketModel.js';
 import User from '../models/userModel.js';
-import Equipment from '../models/Equipment.js';
+import Equipment from '../models/equipmentModel.js';
 //import CreateTicket from '../../src/pages/Tickets.jsx';
 import mongoose from 'mongoose';
 import { response } from 'express';
@@ -10,15 +10,15 @@ import { response } from 'express';
 // @route   POST /api/tickets
 // @access  Private
 const createTicket = asyncHandler(async (req, res) => {
-  const { title, description, priority, type, status, assignedTo, equipment } = req.body;
+  const {title, description, priority, type, status, assignedTo } = req.body;
   const requester = req.user._id;
 
   //console.log('Request Body:', req.body);
   //console.log('Summary:', summary);
 
-  const summary = title;
+  //const summary = title;
     
-  if (!summary) {
+  if (!title) {
     res.status(400);
     throw new Error('Por favor ingrese un resumen');
   }
@@ -38,7 +38,7 @@ const createTicket = asyncHandler(async (req, res) => {
   }
 
   const ticket = new Ticket({
-    summary,
+    title,
     description,
     requester,
     priority,
@@ -53,13 +53,33 @@ const createTicket = asyncHandler(async (req, res) => {
   res.status(201).json(createdTicket);
 });
 
-// @desc    Get all tickets
+// @desc    Get tickets based on user role
 // @route   GET /api/tickets
 // @access  Private
-const getAllTickets = asyncHandler(async (req, res) => {
-  const tickets = await Ticket.find({}).populate('equipment', 'label');
-  res.json(tickets);
+const getTickets = asyncHandler(async (req, res) => {
+  let tickets;
+
+  if (req.user.role === 'Soporte') {
+    // Si el usuario es técnico, obtiene todos los tickets
+    tickets = await Ticket.find({})
+    .populate('equipment', 'label')
+    .populate("assignedTo", "name email")
+    .populate('requester', 'name email');
+  } else {
+    // Si el usuario no es técnico, solo obtiene sus propios tickets
+    tickets = await Ticket.find({ requester: req.user._id })
+      .populate('equipment', 'label')
+      .populate("assignedTo", "name email")
+      .populate('requester', 'name email');
+  }
+
+  if(!tickets){
+    return res.status(404).json({message: "No se encontraron tickets mensaje desde getTickets TicketController.js"})
+  }
+
+  res.status(200).json(tickets);
 });
+
 
 // @desc    Get single ticket by ID
 // @route   GET /api/tickets/:id
@@ -84,59 +104,24 @@ const getTicketsByUser = asyncHandler(async (req, res) => {
 });
 
 
-
-// @desc    Update ticket
-// @route   PUT /api/tickets/:id
-// @access  Private
 const updateTicket = asyncHandler(async (req, res) => {
-  const { summary, description, requester, priority, type, status, assignedTo, comments, response, equipment } = req.body;
+  const updatedTicket = await Ticket.findByIdAndUpdate(
+    req.params.id,
+    req.body, // Solo los campos enviados serán actualizados
+    { new: true, runValidators: true } // `new: true` retorna el documento actualizado
+  ).populate("assignedTo","name email"); // asegura que el modelo tenga una regerencia valida
 
-  const ticket = await Ticket.findById(req.params.id);
-
-  if (ticket) {
-    ticket.summary = summary || ticket.summary;
-    ticket.description = description || ticket.description;
-    ticket.requester = requester || ticket.requester;
-    ticket.priority = priority || ticket.priority;
-    ticket.type = type || ticket.type;
-    ticket.status = status || ticket.status;
-    ticket.assignedTo = assignedTo || ticket.assignedTo;
-    ticket.response = response || ticket.response;
-
-    if (assignedTo) {
-      const assignedUser = await User.findOne({ email: assignedTo });
-      if (!assignedUser) {
-        res.status(400);
-        throw new Error('Usuario asignado no encontrado');
-      }
-      ticket.assignedTo = assignedUser._id;
-    }
-
-      if (Array.isArray(equipment)) {
-        const assignedEquipment = await Equipment.find({ _id: { $in: equipment } });
-        ticket.equipment = assignedEquipment.map(e => e._id);
-      } else {
-        res.status(400);
-        throw new Error('El campo "equipment" debe ser un array');
-      //}
-      }
-
-    if (comments) {
-      ticket.comments.push({
-        user: req.user._id,
-        text: comments,
-        //comments
-        date: new Date(),
-      });
-    }
-
-    const updatedTicket = await ticket.save();
-    res.json(updatedTicket);
-  } else {
+  if (!updatedTicket) {
     res.status(404);
-    throw new Error('Ticket no encontrado');
+    throw new Error("Ticket no encontrado");
   }
+
+  res.status(200).json(updatedTicket);
 });
+
+
+export default updateTicket;
+
 
 // @desc    Delete ticket
 // @route   DELETE /api/tickets/:id
@@ -185,4 +170,76 @@ const addComment = asyncHandler(async (req, res) => {
   }
 });
 
-export {getTicketsByUser, createTicket, getAllTickets, getTicketById, updateTicket, deleteTicket, addComment };
+
+// @desc Agregar un equipo a un ticket
+// @route POST /api/tickets/:id/equipment
+// @access Private
+const addEquipmentToTicket = asyncHandler(async (req, res) => {
+  const { equipmentId } = req.body;
+
+  // Verificar si el equipo existe
+  const equipment = await Equipment.findById(equipmentId);
+  if (!equipment) {
+    res.status(404);
+    throw new Error('Equipo no encontrado.');
+  }
+
+  // Buscar el ticket por ID
+  const ticket = await Ticket.findById(req.params.id);
+  if (!ticket) {
+    res.status(404);
+    throw new Error('Ticket no encontrado.');
+  }
+
+  // Verificar si el equipo ya está asignado al ticket
+  const alreadyAssigned = ticket.equipment.some(
+    (eq) => eq.toString() === equipmentId
+  );
+
+  if (alreadyAssigned) {
+    res.status(400);
+    throw new Error('El equipo ya está asignado a este ticket.');
+  }
+
+  // Agregar el equipo al array de equipos del ticket
+  ticket.equipment.push(equipment._id);
+
+  // Guardar los cambios
+  const updatedTicket = await ticket.save();
+
+  res.status(200).json(updatedTicket);
+});
+
+// const closeTicket = async (req, res) => {
+//   try {
+//     const { ticketId } = req.params;
+//     const userId = req.user.id; // Usuario autenticado (extraído del token)
+
+//     // Buscar el ticket
+//     const ticket = await Ticket.findById(ticketId);
+
+//     if (!ticket) {
+//       return res.status(404).json({ message: 'Ticket no encontrado' });
+//     }
+
+//     // Cambiar el estado del ticket a cerrado
+//     ticket.status = 'Cerrado';
+
+//     // Registrar la acción en el historial
+//     ticket.history.push({
+//       action: 'Cerrado',
+//       performedBy: userId,
+//       date: new Date(),
+//     });
+
+//     await ticket.save();
+
+//     res.json({ message: 'Ticket cerrado con éxito', ticket });
+//   } catch (error) {
+//     console.error('Error al cerrar el ticket:', error);
+//     res.status(500).json({ message: 'Error al cerrar el ticket' });
+//   }
+// };
+
+
+export {addEquipmentToTicket, getTicketsByUser, getTickets, createTicket,getTicketById, updateTicket, deleteTicket, addComment };

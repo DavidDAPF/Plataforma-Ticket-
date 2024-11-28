@@ -25,9 +25,11 @@ const commentSchema = mongoose.Schema(
 
 const ticketSchema = mongoose.Schema(
   {
-    summary: {
+    title: {
       type: String,
-      required:true,
+      required:function (){
+        return this.isNew
+      },
     },
     description: {
       type: String,
@@ -67,10 +69,17 @@ const ticketSchema = mongoose.Schema(
       type: String
     },
 
-    equipment: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Equipment',
-    },
+    // equipment: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: 'Equipment',
+    // },
+
+    equipment: [
+      {
+        _id: { type: mongoose.Schema.Types.ObjectId, ref: 'Equipment' },
+        label: { type: String, required: true },
+      },
+    ], //Equipo pasa a ser un array
   },
   {
     timestamps: true,

@@ -11,6 +11,7 @@ const Equipment = () => {
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isHistoryModalOpen, setHistoryModalOpen] = useState(false);
+  const [selectedHistory, setSelectedHistory] = useState([]);
   const [selectedEquipment, setSelectedEquipment] = useState(null);
 
   const handleOpenAddModal = () => setAddModalOpen(true);
@@ -29,6 +30,7 @@ const Equipment = () => {
   const handleCloseDeleteModal = () => setDeleteModalOpen(false);
 
   const handleOpenHistoryModal = (item) => {
+    setSelectedHistory(item.history || []);
     setSelectedEquipment(item);
     setHistoryModalOpen(true);
   };
@@ -41,7 +43,7 @@ const Equipment = () => {
           <h1 className="text-3xl font-bold">Equipos</h1>
           <button
             onClick={handleOpenAddModal}
-            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+            className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
           >
             Añadir Equipo
           </button>
@@ -49,7 +51,7 @@ const Equipment = () => {
         <AddEquipmentModal isOpen={isAddModalOpen} onClose={handleCloseAddModal} onAddEquipment={addEquipment} />
         <EditEquipmentModal isOpen={isEditModalOpen} onClose={handleCloseEditModal} onEditEquipment={updateEquipment} equipment={selectedEquipment} />
         <DeleteEquipmentModal isOpen={isDeleteModalOpen} onClose={handleCloseDeleteModal} onDeleteEquipment={deleteEquipment} equipment={selectedEquipment} />
-        <EquipmentHistoryModal isOpen={isHistoryModalOpen} onClose={handleCloseHistoryModal} equipment={selectedEquipment} />
+        <EquipmentHistoryModal isOpen={isHistoryModalOpen} onClose={handleCloseHistoryModal} history={selectedHistory} />
         <table className="w-full text-left border-collapse">
           <thead>
             <tr>
@@ -58,49 +60,61 @@ const Equipment = () => {
               <th className="border-b p-4">Modelo</th>
               <th className="border-b p-4">Número de Serie</th>
               <th className="border-b p-4">Dirección IP</th>
-              <th className="border-b p-4">Dirección MAC</th>
-              <th className="border-b p-4">Tipo de Equipo</th>
-              <th className="border-b p-4">Usuario Asignado</th>
+              <th className="border-b p-4">Usuario</th>
               <th className="border-b p-4">Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {equipmentList.map((item) => (
-              <tr key={item.id}>
-                <td className="border-b p-4">{item.label}</td>
-                <td className="border-b p-4">{item.brand}</td>
-                <td className="border-b p-4">{item.model}</td>
-                <td className="border-b p-4">{item.serialNumber}</td>
-                <td className="border-b p-4">{item.ipAddress}</td>
-                <td className="border-b p-4">{item.macAddress}</td>
-                <td className="border-b p-4">{item.type}</td>
-                <td className="border-b p-4">{item.assignedUser}</td>
-                <td className="border-b p-4">
-                  <button
-                    onClick={() => handleOpenEditModal(item)}
-                    className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 mr-2"
-                  >
-                    Editar
-                  </button>
-                  <button
-                    onClick={() => handleOpenDeleteModal(item)}
-                    className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 mr-2"
-                  >
-                    Eliminar
-                  </button>
-                  <button
-                    onClick={() => handleOpenHistoryModal(item)}
-                    className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
-                  >
-                    Historial
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+             {Array.isArray(equipmentList) && equipmentList.length > 0 ? (
+              equipmentList.map((item) => (
+                <tr key={item._id}>
+                  <td className="border-b p-4">{item.label || 'N/A'}</td>
+                  <td className="border-b p-4">{item.brand || 'N/A'}</td>
+                  <td className="border-b p-4">{item.model || 'N/A'}</td>
+                  <td className="border-b p-4">{item.serialNumber || 'N/A'}</td>
+                  <td className="border-b p-4">{item.ipAddress || 'No requiere'}</td>
+                   <td className="border-b p-4" >
+                      {/* Verifica si el campo assignedUser tiene un objeto con 'name', sino muestra 'No asignado' */}
+                      {item.assignedUser && item.assignedUser?.name
+                        ? item.assignedUser?.name
+                        : 'No asignado'}
+                    </td>
+                  <td className="border-b p-4">
+                    <button
+                      onClick={() => handleOpenEditModal(item)}
+                      className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 mr-2"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => handleOpenDeleteModal(item)}
+                      className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 mr-2"
+                    >
+                      Eliminar
+                    </button>
+                    <button
+                      onClick={() => handleOpenHistoryModal(item)}
+                      className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
+                    >
+                      Historial
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+    <tr>
+      <td colSpan="8" className="text-center">
+        No hay equipos disponibles.
+      </td>
+    </tr>
+  )}
+</tbody>
+
+
+
+          </table>
+        </div>
       </div>
-    </div>
   );
 };
 

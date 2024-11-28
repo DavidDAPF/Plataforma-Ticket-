@@ -3,31 +3,56 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from './AuthContext.jsx';
 
+//import { TicketContext} from '/home/david/Documentos/TESIS-CODIGO/primera-tesis/src/context/'
 export const TicketContext = createContext();
+
 
 export const TicketProvider = ({ children }) => {
   const [tickets, setTickets] = useState([]);
-  const { token, user } = useContext(AuthContext);
+  //const { token, user } = useContext(AuthContext);
+  const [error, setError] = useState(null);
+  const { loading, user} = useContext(AuthContext);
 
+  // const fetchTickets = async () => {
+  //   //if (token) {
+  //     try {
+  //       const response = await axios.get('http://localhost:5000/api/tickets', {
+  //         headers: {
+  //           //Authorization: `Bearer ${token}`
+  //           Authorization: `Bearer ${localStorage.getItem('token')}`,
+  //         }
+  //       });
+  //       setTickets(response.data);
+  //     } catch (error) {
+  //       console.error('Error fetching tickets:', error);
+  //     }
+  //   //}
+  // };
   const fetchTickets = async () => {
-    //if (token) {
-      try {
-        const response = await axios.get('http://localhost:5000/api/tickets', {
-          headers: {
-            //Authorization: `Bearer ${token}`
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          }
-        });
-        setTickets(response.data);
-      } catch (error) {
-        console.error('Error fetching tickets:', error);
-      }
-    //}
+    if (!user) return; // Asegúrate de que el usuario esté autenticado
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      };
+      const { data } = await axios.get('http://localhost:5000/api/tickets', config);
+      setTickets(data);
+    } catch (error) {
+      console.error('Error fetching tickets:', error);
+      setError('No se pudieron cargar los tickets.');
+    }
   };
 
+  // useEffect(() => {
+  //   fetchTickets();
+  // }, [token]);
+
   useEffect(() => {
-    fetchTickets();
-  }, [token]);
+    if (!loading) {
+      fetchTickets();
+    }
+  }, [loading, user]); // Solo intenta cargar tickets si el usuario está autenticado
 
   const createTicket = async (ticketData) => {
     try {
@@ -80,7 +105,7 @@ export const TicketProvider = ({ children }) => {
   };
 
   return (
-    <TicketContext.Provider value={{ tickets, fetchTickets, createTicket, updateTicket, fetchTicketsByUser }}>
+    <TicketContext.Provider value={{ tickets,setTickets, fetchTickets, createTicket, updateTicket, fetchTicketsByUser }}>
       {children}
     </TicketContext.Provider>
   );

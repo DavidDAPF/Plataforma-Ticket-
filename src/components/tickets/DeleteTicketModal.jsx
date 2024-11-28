@@ -16,7 +16,7 @@ const DeleteTicketModal = ({ isOpen, onClose, onDelete, ticket }) => {
           <h3 className="text-lg font-semibold">Eliminar Ticket</h3>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">&times;</button>
         </div>
-        <p>¿Estás seguro de que quieres eliminar el ticket "{ticket.summary}"?</p>
+        <p>¿Estás seguro de que quieres eliminar el ticket "{ticket.title}"?</p>
         <div className="flex justify-end mt-4">
           <button onClick={onClose} className="bg-gray-300 text-black px-4 py-2 rounded-md hover:bg-gray-400 mr-2">
             Cancelar

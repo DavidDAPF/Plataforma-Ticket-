@@ -13,7 +13,7 @@ const TicketModal = ({ isOpen, onClose, ticket }) => {
     isOpen && (
       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
         <div className="bg-white p-6 rounded-md shadow-md w-1/2">
-          <h2 className="text-2xl font-bold mb-4">Ticket: {ticket.summary}</h2>
+          <h2 className="text-2xl font-bold mb-4">Ticket: {ticket.title}</h2>
           <p className="mb-4">{ticket.description}</p>
           <form onSubmit={handleSubmit}>
             <textarea

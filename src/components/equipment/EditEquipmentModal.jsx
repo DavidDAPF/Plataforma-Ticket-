@@ -1,4 +1,9 @@
+// export default EditEquipmentModal;
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import UserSelectionModal from './UserSeleccionModal';
+
+
 
 const EditEquipmentModal = ({ isOpen, onClose, onEditEquipment, equipment }) => {
   const [label, setLabel] = useState('');
@@ -6,9 +11,25 @@ const EditEquipmentModal = ({ isOpen, onClose, onEditEquipment, equipment }) => 
   const [model, setModel] = useState('');
   const [serialNumber, setSerialNumber] = useState('');
   const [ipAddress, setIpAddress] = useState('');
-  const [macAddress, setMacAddress] = useState('');
-  const [type, setType] = useState('');
   const [assignedUser, setAssignedUser] = useState('');
+  const [showUserModal, setShowUserModal] = useState(false);
+  const [users, setUsers] = useState([]);
+
+   // Lógica para cargar los usuarios
+   useEffect(() => {
+    const fetchUsers = async () => {
+        try {
+            const response = await axios.get('http://localhost:5000/api/users', {
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+            });
+            setUsers(response.data); // Guardamos los usuarios en el estado
+        } catch (error) {
+            console.error('Error fetching users:', error);
+        }
+    };
+
+    fetchUsers(); // Llamada a la función
+}, []);
 
   useEffect(() => {
     if (equipment) {
@@ -17,17 +38,36 @@ const EditEquipmentModal = ({ isOpen, onClose, onEditEquipment, equipment }) => 
       setModel(equipment.model || '');
       setSerialNumber(equipment.serialNumber || '');
       setIpAddress(equipment.ipAddress || '');
-      setMacAddress(equipment.macAddress || '');
-      setType(equipment.type || '');
-      setAssignedUser(equipment.assignedUser || '');
+      setAssignedUser(equipment.assignedUser?._id || '');
+      //setAssignedUser(equipment.assignedUser || ''); // Mantener el usuario actual
     }
   }, [equipment]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onEditEquipment({ ...equipment, label, brand, model, serialNumber, ipAddress, macAddress, type, assignedUser });
+  
+
+    //const userToAssign = assignedUser.trim() === '' ? null : assignedUser;
+  
+    const updatedData = {
+      label,
+      brand,
+      model,
+      serialNumber,
+      ipAddress,
+      //assignedUser: userToAssign,
+      //assignedUser: assignedUser || equipment.assignedUser, // Usar el valor actual si no se selecciona
+      assignedUser: assignedUser || assignedUser?._id || null, // Enviar solo el id en el backend
+    };
+  
+    console.log('Datos enviados al backend:', updatedData);
+    console.log('Datos enviados:', { ...equipment, label, brand, model, serialNumber, ipAddress, assignedUser });
+   //     onEditEquipment({ ...equipment, label, brand, model, serialNumber, ipAddress, assignedUser });
+  
+    onEditEquipment(equipment._id,updatedData);
     onClose();
   };
+
 
   if (!isOpen) return null;
 
@@ -79,45 +119,46 @@ const EditEquipmentModal = ({ isOpen, onClose, onEditEquipment, equipment }) => 
               required
             />
           </div>
-          <div className="mb-4">
-            <label className="block text-gray-700">Dirección IP</label>
-            <input
-              type="text"
-              value={ipAddress}
-              onChange={(e) => setIpAddress(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 bg-white border shadow-sm border-gray-300 rounded-md"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700">Dirección MAC</label>
-            <input
-              type="text"
-              value={macAddress}
-              onChange={(e) => setMacAddress(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 bg-white border shadow-sm border-gray-300 rounded-md"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700">Tipo de Equipo</label>
-            <input
-              type="text"
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 bg-white border shadow-sm border-gray-300 rounded-md"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700">Usuario Asignado</label>
-            <input
-              type="text"
-              value={assignedUser}
-              onChange={(e) => setAssignedUser(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 bg-white border shadow-sm border-gray-300 rounded-md"
-            />
-          </div>
+
+          {/* Campo de Dirección IP */}
+            <div className="mb-4">
+              <label className="block text-gray-700">Dirección IP</label>
+              <input
+                type="text"
+                value={ipAddress}
+                onChange={(e) => setIpAddress(e.target.value)} // Validar en frontend si es necesario
+                className="mt-1 block w-full px-3 py-2 bg-white border shadow-sm border-gray-300 rounded-md"
+                placeholder='Opcional'
+              />
+            </div>
+
+              <div className="mb-4">
+                  <label className="block text-gray-700">Usuario Asignado</label>
+                  <button
+                      type="button"
+                      onClick={() => setShowUserModal(true)} // Muestra el modal de usuarios
+                      className="mt-1 block w-full px-3 py-2 bg-white border shadow-sm border-gray-300 rounded-md text-left"
+                  >
+                      {/* {assignedUser ? `Usuario ID: ${assignedUser}` : 'Seleccionar usuario'} */}
+                      {/* {assignedUser && assignedUser.name ? assignedUser.name : 'Seleccionar usuario'} */}
+                      {assignedUser
+                         ? users.find((user) => user._id === assignedUser)?.name || 'Usuario no encontrado'
+                         : 'Seleccionar usuario'}
+                  </button>
+              </div>
+              {showUserModal && (
+                  <UserSelectionModal
+                      isOpen={showUserModal}
+                      onClose={() => setShowUserModal(false)}
+                      users={users}
+                      onUserSelect={(user) => { //userId
+                          setAssignedUser(user); // Actualiza el usuario asignado
+                          setShowUserModal(false); // Cierra el modal
+                      }}
+                  />
+              )}
+
+
           <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
             Guardar Cambios
           </button>
@@ -128,3 +169,4 @@ const EditEquipmentModal = ({ isOpen, onClose, onEditEquipment, equipment }) => 
 };
 
 export default EditEquipmentModal;
+

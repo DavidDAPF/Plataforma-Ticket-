@@ -20,6 +20,16 @@ const userSchema = mongoose.Schema({
     enum: ['Usuario', 'Soporte'],
     default: 'Usuario',
   },
+
+  //Campo de equipos asignados
+  equipmentAssignments: {
+    type: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Equipment',
+    }],
+    default: [], // Asegura que siempre sea un arreglo vacío
+  },
+  
   resetPasswordToken: String,
   resetPasswordExpire: Date,
 }, {

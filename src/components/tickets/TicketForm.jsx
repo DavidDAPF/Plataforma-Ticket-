@@ -5,12 +5,12 @@ const TicketForm = ({ ticketData, setTicketData, handleSubmit }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label htmlFor="summary" className="block text-gray-700">Asunto:</label>
+        <label htmlFor="title" className="block text-gray-700">Asunto:</label>
         <input
           type="text"
-          id="summary"
-          value={ticketData.summary}
-          onChange={(e) => setTicketData({ ...ticketData, summary: e.target.value })}
+          id="title"
+          value={ticketData.title}
+          onChange={(e) => setTicketData({ ...ticketData, title: e.target.value })}
           className="w-full px-3 py-2 border rounded-md"
           placeholder="Resumen del requerimiento"
           required

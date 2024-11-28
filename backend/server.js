@@ -25,6 +25,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/equipment', equipmentRoutes);
 app.use('/api/locations', locationRoutes);
+app.use('api/users', userRoutes);
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
