@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import Modal from '../common/Modal.jsx';
 import axios from 'axios';
 import { TicketContext } from '../../context/TicketContext.jsx';
+import { toast } from 'react-toastify';
 
 const PasswordRecoveryModal = ({ isOpen, onClose }) => {
   const { createTicket } = useContext(TicketContext);
@@ -26,11 +27,11 @@ const PasswordRecoveryModal = ({ isOpen, onClose }) => {
     e.preventDefault();
     try {
       await axios.post('http://localhost:5000/api/auth/request-password-reset', { email });
-      alert('Se ha enviado un correo de recuperación de contraseña. Por favor, revise su bandeja de entrada.');
+      toast.success('Se ha enviado un correo de recuperación de contraseña. Por favor, revise su bandeja de entrada.');
       onClose();
     } catch (error) {
       console.error('Error al enviar la solicitud de recuperación de contraseña:', error);
-      alert('Error al enviar la solicitud de recuperación de contraseña. Por favor, inténtelo de nuevo.');
+      toast.error('Error al enviar la solicitud de recuperación de contraseña. Por favor, inténtelo de nuevo.');
     }
   };
 

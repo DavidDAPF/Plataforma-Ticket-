@@ -17,7 +17,7 @@ const SupportTickets = () => {
       fetchTickets();
     }
     fetchTechnicians(); // Obtener la lista de técnicos
-    console.log( "Tickets cargados desde el contexto: ", tickets);
+    //console.log( "Tickets cargados desde el contexto: ", tickets);
   }, [fetchTickets, tickets]);
 
   // Función para obtener la lista de técnicos
@@ -104,10 +104,11 @@ const SupportTickets = () => {
           <thead>
             <tr>
               <th className="border-b p-4">Título</th>
-              <th className="border-b p-4">Resumen</th>
+              <th className="border-b p-4">Usuario</th>
               <th className="border-b p-4">Estado</th>
               <th className="border-b p-4">Asignado a</th>
               <th className="border-b p-4">Fecha de Creación</th>
+              <th className="border-b p-4">Fecha de Actualizacion</th>
               <th className="border-b p-4">Acciones </th>
             </tr>
           </thead>
@@ -116,7 +117,7 @@ const SupportTickets = () => {
               tickets.map((ticket) => (
                 <tr key={ticket._id}>
                   <td className="border-b p-4">{ticket.title || "Sin título"}</td>
-                  <td className="border-b p-4">{ticket.summary || "Sin resumen"}</td>
+                  <td className="border-b p-4">{ticket.requester?.name || "Sin nombre"}</td>
                   <td
                     className={`border-b p-4 ${
                       ticket.status === "Abierto"
@@ -131,6 +132,9 @@ const SupportTickets = () => {
                   </td>
                   <td className="border-b p-4">
                     {new Date(ticket.createdAt).toLocaleDateString()}
+                  </td>
+                  <td className="border-b p-4">
+                    {new Date(ticket.updatedAt).toLocaleDateString()}
                   </td>
                   <td className="border-b p-4">
                     <button
@@ -157,21 +161,18 @@ const SupportTickets = () => {
       {selectedTicket && (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-md shadow-md w-1/2">
-            <h3> Prioridad: {selectedTicket.priority || "No prioritario"} </h3>
+            <h3 className="mb-4" ><strong> Prioridad: </strong> {selectedTicket.priority || "No prioritario"} </h3>
             {/* <h3> Solicitante: {selectedTicket.requester || "No usuario data"} </h3> */}
-            <h3>
-              Solicitante: 
-                {selectedTicket.requester && selectedTicket.requester.name
+            <h3 className="mb-4" >
+              <strong>Solicitante: </strong> 
+                {selectedTicket.requester && selectedTicket.requester?.name
                   ? selectedTicket.requester.name
                   : "No usuario data"}
             </h3>
-            <h2 className="text-2xl font-bold mb-4">
-              Ticket: {selectedTicket.title || "Sin título"}
+            <h2 className="text-1xl font-bold mb-4">
+              Titulo: {selectedTicket.title || "Sin título"}
             </h2>
-            <h2>Tipo: {selectedTicket.type || "Sin tipo asignado" }</h2>
-            <p className="mb-2">
-              <strong>Resumen:</strong> {selectedTicket.summary || "Sin resumen"}
-            </p>
+            <h2 className="mb-4" ><strong>Tipo:</strong> {selectedTicket.type || "Sin tipo asignado" }</h2>
             <p className="mb-4">
               <strong>Descripción:</strong>{" "}
               {selectedTicket.description || "Sin descripción"}
@@ -179,7 +180,7 @@ const SupportTickets = () => {
 
             <div className="mb-4">
               {/* <label className="block mb-2">Asignar a:</label> */}
-              <p>
+              <p className="mb-4" >
                 <strong>Asignado a:</strong>{" "}
                 {selectedTicket.assignedTo && selectedTicket.assignedTo.name 
                   ? selectedTicket.assignedTo.name 

@@ -51,7 +51,7 @@ const ticketSchema = mongoose.Schema(
     type: {
       type: String,
       required: true,
-      enum: ['Software', 'Hardware', 'Recuperación de contraseña'],
+      enum: ['Software', 'Hardware'],
       default: 'Software',
     },
     status: {
@@ -69,10 +69,10 @@ const ticketSchema = mongoose.Schema(
       type: String
     },
 
-    // equipment: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: 'Equipment',
-    // },
+    response: {
+       type: String, 
+       default: '' 
+      }, // Respuesta inicial del técnico
 
     equipment: [
       {

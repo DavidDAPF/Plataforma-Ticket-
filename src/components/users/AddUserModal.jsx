@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import Modal from '../common/Modal';
@@ -8,40 +8,47 @@ import { EquipmentContext } from '../../context/EquipmentContext';
 const AddUserModal = ({ isOpen, onClose, onAddUser }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [role, setRole] = useState('usuario');
-  const [location, setLocation] = useState('');
+  const [role, setRole] = useState('Usuario');
+  //const [location, setLocation] = useState('');
   const [status, setStatus] = useState('Activo');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [selectedEquipment, setSelectedEquipment] = useState([]);
+  const [password, setPassword] = useState('');
+  //const [phoneNumber, setPhoneNumber] = useState('');
+  //const [selectedEquipment, setSelectedEquipment] = useState([]);
   const { locations } = useContext(LocationContext);
-  const { equipmentList } = useContext(EquipmentContext);
+  //const { equipmentList } = useContext(EquipmentContext);
 
+   // Reiniciar los estados al abrir el modal
+   useEffect(() => {
+    if (isOpen) {
+      setName('');
+      setEmail('');
+      setRole('Usuario');
+      setStatus('Activo');
+      setPassword('');
+    }
+  }, [isOpen]);
+  
   const handleSubmit = (e) => {
     e.preventDefault();
-    onAddUser({ name, email, role, location, status, phoneNumber, equipment: selectedEquipment });
+    onAddUser({ name, email, role, status, password});
     onClose();
   };
 
-  const handleEquipmentChange = (e) => {
-    const options = e.target.options;
-    const selected = [];
-    for (let i = 0, l = options.length; i < l; i++) {
-      if (options[i].selected) {
-        selected.push(options[i].value);
-      }
-    }
-    setSelectedEquipment(selected);
-  };
+  //ESTE CODIGO NO SE USA MANTENERLO COMENTADO
+  // const handleEquipmentChange = (e) => {
+  //   const options = e.target.options;
+  //   const selected = [];
+  //   for (let i = 0, l = options.length; i < l; i++) {
+  //     if (options[i].selected) {
+  //       selected.push(options[i].value);
+  //     }
+  //   }
+  //   setSelectedEquipment(selected);
+  // };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      <Tabs>
-        <TabList>
-          <Tab>Datos del Usuario</Tab>
-          <Tab>Equipos</Tab>
-        </TabList>
 
-        <TabPanel>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label className="block mb-2">Nombre</label>
@@ -64,17 +71,28 @@ const AddUserModal = ({ isOpen, onClose, onAddUser }) => {
               />
             </div>
             <div className="mb-4">
+              <label className="block mb-2">Contraseña</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-2 border rounded-md"
+                required
+              />
+            </div>
+
+            <div className="mb-4">
               <label className="block mb-2">Rol</label>
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
                 className="w-full px-4 py-2 border rounded-md"
               >
-                <option value="usuario">Usuario</option>
-                <option value="soporte">Soporte</option>
+                <option value="Usuario">Usuario</option>
+                <option value="Soporte">Soporte</option>
               </select>
             </div>
-            <div className="mb-4">
+            {/* <div className="mb-4">
               <label className="block mb-2">Ubicación</label>
               <select
                 value={location}
@@ -88,7 +106,7 @@ const AddUserModal = ({ isOpen, onClose, onAddUser }) => {
                   </option>
                 ))}
               </select>
-            </div>
+            </div> */}
             <div className="mb-4">
               <label className="block mb-2">Estatus</label>
               <select
@@ -100,7 +118,7 @@ const AddUserModal = ({ isOpen, onClose, onAddUser }) => {
                 <option value="Inactivo">Inactivo</option>
               </select>
             </div>
-            <div className="mb-4">
+            {/* <div className="mb-4">
               <label className="block mb-2">Número de Teléfono</label>
               <input
                 type="text"
@@ -109,7 +127,7 @@ const AddUserModal = ({ isOpen, onClose, onAddUser }) => {
                 className="w-full px-4 py-2 border rounded-md"
                 required
               />
-            </div>
+            </div> */}
             <div className="flex justify-end mt-4">
               <button
                 type="submit"
@@ -119,25 +137,6 @@ const AddUserModal = ({ isOpen, onClose, onAddUser }) => {
               </button>
             </div>
           </form>
-        </TabPanel>
-        <TabPanel>
-          <div>
-            <label className="block mb-2">Equipos y Periféricos</label>
-            <select
-              multiple
-              value={selectedEquipment}
-              onChange={handleEquipmentChange}
-              className="w-full px-4 py-2 border rounded-md"
-            >
-              {equipmentList.map((equipment) => (
-                <option key={equipment.id} value={equipment.id}>
-                  {equipment.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        </TabPanel>
-      </Tabs>
     </Modal>
   );
 };

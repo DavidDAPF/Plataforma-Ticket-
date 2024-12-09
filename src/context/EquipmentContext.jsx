@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 export const EquipmentContext = createContext();
 
@@ -7,28 +8,59 @@ const EquipmentProvider = ({ children }) => {
   const [equipmentList, setEquipmentList] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  // DESMARCAR EN CASO DE ERROR  
+  // const fetchEquipment = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const response = await axios.get('http://localhost:5000/api/equipment', {
+  //       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+  //     });
+  //     const data = Array.isArray(response.data) ? response.data : JSON.parse(response.data);
+  //     console.log('Equipos cargados:', data); // Verifica que aquí sea un array
+  //     setEquipmentList(data);
+  //     } catch (error) {
+  //       console.error('Error fetching equipment:', error);
+  //       if (error.response && error.response.status === 401) {
+  //         // Manejo de sesión expirada o no autorizada
+  //         console.warn('Token no válido o sesión expirada.');
+  //         localStorage.removeItem('token'); // Opcional: eliminar el token
+  //         setEquipmentList([]); // Limpia la lista si no hay acceso
+  //       }
+  //       setEquipmentList([]); // Maneja errores inicializando como vacío
+  //     } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const fetchEquipment = async () => {
     setLoading(true);
     try {
       const response = await axios.get('http://localhost:5000/api/equipment', {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
-      const data = Array.isArray(response.data) ? response.data : JSON.parse(response.data);
-      console.log('Equipos cargados:', data); // Verifica que aquí sea un array
-      setEquipmentList(data);
-      } catch (error) {
-        console.error('Error fetching equipment:', error);
-        if (error.response && error.response.status === 401) {
-          // Manejo de sesión expirada o no autorizada
-          console.warn('Token no válido o sesión expirada.');
-          localStorage.removeItem('token'); // Opcional: eliminar el token
-          setEquipmentList([]); // Limpia la lista si no hay acceso
-        }
-        setEquipmentList([]); // Maneja errores inicializando como vacío
-      } finally {
+  
+      if (Array.isArray(response.data)) {
+        console.log('Equipos cargados:', response.data);
+        setEquipmentList(response.data);
+      } else {
+        console.error('La respuesta no es un array:', response.data);
+        setEquipmentList([]); // Aseguramos que la lista quede vacía si el formato es inesperado
+      }
+    } catch (error) {
+      console.error('Error fetching equipment:', error);
+      if (error.response && error.response.status === 401) {
+        console.warn('Token no válido o sesión expirada.');
+        toast.error('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+        localStorage.removeItem('token'); // Limpia el token
+      } else {
+        toast.error('Error al cargar los equipos. Inténtalo más tarde.');
+      }
+      setEquipmentList([]); // Limpia en caso de error
+    } finally {
       setLoading(false);
     }
   };
+  
   
   
   
@@ -45,27 +77,53 @@ const EquipmentProvider = ({ children }) => {
     }
   };
 
-  const updateEquipment = async (id, updatedData) => {
-    try {
-        const response = await axios.put(`http://localhost:5000/api/equipment/${id}`, updatedData, {
-            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-        });
+  // DESMARCAR EN CASO DE ERROR
+//   const updateEquipment = async (id, updatedData) => {
+//     try {
+//         const response = await axios.put(`http://localhost:5000/api/equipment/${id}`, updatedData, {
+//             headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+//         });
 
-        const updatedEquipment = response.data; // El equipo actualizado devuelto por el backend
+//         const updatedEquipment = response.data; // El equipo actualizado devuelto por el backend
 
-        // Actualiza el estado de equipmentList
-        setEquipmentList((prevList) =>
-            prevList.map((item) =>
-                item._id === updatedEquipment._id ? updatedEquipment : item
-            )
-        );
+//         // Actualiza el estado de equipmentList
+//         setEquipmentList((prevList) =>
+//             prevList.map((item) =>
+//                 item._id === updatedEquipment._id ? updatedEquipment : item
+//             )
+//         );
 
-        console.log("Equipo Actualizado: ",updateEquipment);
+//         console.log("Equipo Actualizado: ",updateEquipment);
 
-    } catch (error) {
-        console.error('Error updating equipment:', error);
-    }
+//     } catch (error) {
+//         console.error('Error updating equipment:', error);
+//     }
+// };
+
+const updateEquipment = async (id, updatedData) => {
+  try {
+    const response = await axios.put(`http://localhost:5000/api/equipment/${id}`, updatedData, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    });
+
+    const updatedEquipment = response.data; // El equipo actualizado devuelto por el backend
+
+    // Actualiza el estado de equipmentList
+    setEquipmentList((prevList) =>
+      prevList.map((item) =>
+        item._id === updatedEquipment._id ? updatedEquipment : item
+      )
+    );
+
+    // Notificar éxito al usuario
+    toast.success('Equipo actualizado correctamente.');
+    console.log('Equipo actualizado correctamente:', updatedEquipment);
+  } catch (error) {
+    console.error('Error al actualizar el equipo:', error);
+    toast.error('Error al actualizar el equipo. Inténtalo más tarde.');
+  }
 };
+
 
 
   
@@ -116,7 +174,7 @@ const EquipmentProvider = ({ children }) => {
 
   return (
     <EquipmentContext.Provider
-      value={{ equipmentList, addEquipment, updateEquipment, deleteEquipment, assignEquipment, loading }}
+      value={{ equipmentList, addEquipment, updateEquipment, deleteEquipment, assignEquipment, loading, fetchEquipment }}
     >
       {children}
     </EquipmentContext.Provider>

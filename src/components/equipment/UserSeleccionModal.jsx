@@ -19,14 +19,19 @@ const UserSelectionModal = ({ isOpen, onClose, users, onUserSelect }) => {
                   key={user._id}
                   className="flex justify-between items-center p-2 border rounded cursor-pointer hover:bg-gray-100"
                   onClick={() => {
+                    if(user._id){
                     console.log('Usuario seleccionado: ', user._id);
-                    onUserSelect(user._id);}}
+                    onUserSelect(user._id);
+                  }else{
+                    console.error('El usuario seleccionado no tiene un ID valido', user);
+                  }}
+                }
                 >
                   <span>{user.name} ({user.email})</span>
                 </li>
               ))
             ) : (
-              <li className="text-gray-500">No hay usuarios disponibles</li>
+              <li className="text-gray-500">No hay usuarios disponibles para asignar</li>
             )}
           </ul>
         </div>

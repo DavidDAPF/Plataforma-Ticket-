@@ -1,6 +1,8 @@
 // src/App.jsx
 import React, {useContext} from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import {ToastContainer} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Login from './pages/Login.jsx';
 import UserDashboard from './pages/UserDashboard.jsx';
 import UserDetail from './pages/UserDetail.jsx'; // Import UserDetail
@@ -35,6 +37,7 @@ const App = () => {
         <UserProvider>
           <EquipmentProvider>
             <LocationProvider>
+              <ToastContainer />
               { user && <Header /> }
                 <Routes>
                  <Route path="/login" element={<Login />} />

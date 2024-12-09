@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const EquipmentSchema = new mongoose.Schema({
-  // label seria el equivalente al codigo de patrimonio
+  // label seria el equivalente al codigo del equipo 
   label: {
     type: String,
     required: true,
@@ -21,7 +21,6 @@ const EquipmentSchema = new mongoose.Schema({
   },
   ipAddress: {
     type: String,
-    //unique: false,
     validate: {
       validator: function (v) {
         // Validación de IPv4 (opcional, solo si se proporciona)
@@ -29,26 +28,20 @@ const EquipmentSchema = new mongoose.Schema({
       },
       message: (props) => `${props.value} no es una dirección IPv4 válida.`,
     },
-    // validate: {
-    //   validator: function(v) {
-    //     if (this.type === 'peripheral') {
-    //       return v === null || v === ''; // No se permite dirección IP para periferales
-    //     } else {
-    //       // Validación de IPv4 para hardware
-    //       return /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(v);
-    //     }
-    //   },
-    //   message: props => `${props.value} no es una dirección IPv4 válida para el tipo ${props.path === 'peripheral' ? 'peripheral' : 'hardware'}!`
-    // },
   },
 
   assignedUser: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'User', //referencia a la coleccion usuarios
+    default: null, // puede no estar asignado a ningun usuario
   },
   status: { 
     type: String,
-    enum: ['activo','inactivo', 'inventario'], default: 'inventario'},
+    enum: ['activo',    //Estado disponible y/o asignado a usuario
+           'inactivo',  //No esta disponible o dado de baja
+           'inventario' //Nuevo pero no asignado o guardado 
+          ], 
+    default: 'inventario'},
 
     // Campo para historial
   history: [
@@ -58,18 +51,13 @@ const EquipmentSchema = new mongoose.Schema({
       ticket: { type: mongoose.Schema.Types.ObjectId, ref: 'Ticket', default: null }, // Ticket relacionado, si aplica
       previousState: { type: String, default: null }, // Estado previo, si aplica
       currentState: { type: String, default: null }, // Estado actual, si aplica
+      //previousState: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+      //currentState: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
       date: { type: Date, default: Date.now }, // Fecha del evento
     },
   ],
 });
 
-// // Pre-save hook para manejar la dirección IP de periferales
-// EquipmentSchema.pre('save', function(next) {
-//   if (this.type === 'peripheral') {
-//     this.ipAddress = null;
-//   }
-//   next();
-// });
 
 const Equipment = mongoose.model('Equipment', EquipmentSchema);
 

@@ -4,27 +4,27 @@ const AddUserForm = ({ onAddUser }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('');
-  const [age, setAge] = useState('');
-  const [location, setLocation] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  //const [age, setAge] = useState('');
+  //const [location, setLocation] = useState('');
+  //const [phoneNumber, setPhoneNumber] = useState('');
   const [status, setStatus] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onAddUser({ name, email, role, age, location, phoneNumber, status });
+    onAddUser({ name, email, role, status });
     setName('');
     setEmail('');
     setRole('');
-    setAge('');
-    setLocation('');
-    setPhoneNumber('');
+    //setAge('');
+    //setLocation('');
+    //setPhoneNumber('');
     setStatus('');
   };
 
   return (
     <form onSubmit={handleSubmit} className="mb-6">
       <div className="mb-4">
-        <label className="block text-gray-700">Nombre</label>
+        <label className="block text-gray-700">Nombre y Apellido</label>
         <input
           type="text"
           value={name}
@@ -52,11 +52,11 @@ const AddUserForm = ({ onAddUser }) => {
           required
         >
           <option value="">Seleccione un rol</option>
-          <option value="usuario">Usuario</option>
-          <option value="soporte">Soporte</option>
+          <option value="Usuario">Usuario</option>
+          <option value="Soporte">Soporte</option>
         </select>
       </div>
-      <div className="mb-4">
+      {/* <div className="mb-4">
         <label className="block text-gray-700">Edad</label>
         <input
           type="number"
@@ -65,8 +65,8 @@ const AddUserForm = ({ onAddUser }) => {
           className="mt-1 block w-full px-3 py-2 bg-white border shadow-sm border-gray-300 rounded-md"
           required
         />
-      </div>
-      <div className="mb-4">
+      </div> */}
+      {/* <div className="mb-4">
         <label className="block text-gray-700">Ubicación</label>
         <input
           type="text"
@@ -75,8 +75,8 @@ const AddUserForm = ({ onAddUser }) => {
           className="mt-1 block w-full px-3 py-2 bg-white border shadow-sm border-gray-300 rounded-md"
           required
         />
-      </div>
-      <div className="mb-4">
+      </div> */}
+      {/* <div className="mb-4">
         <label className="block text-gray-700">Número de Teléfono</label>
         <input
           type="tel"
@@ -85,7 +85,7 @@ const AddUserForm = ({ onAddUser }) => {
           className="mt-1 block w-full px-3 py-2 bg-white border shadow-sm border-gray-300 rounded-md"
           required
         />
-      </div>
+      </div> */}
       <div className="mb-4">
         <label className="block text-gray-700">Estatus</label>
         <select

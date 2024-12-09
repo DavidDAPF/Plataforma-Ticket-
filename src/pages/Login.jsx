@@ -2,29 +2,8 @@ import React, { useContext, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext.jsx';
 import PasswordRecoveryModal from '../components/auth/PasswordRecoveryModal.jsx';
+import { toast } from 'react-toastify';
 
-// const Login = () => {
-//   const navigate = useNavigate();
-//   const [isModalOpen, setModalOpen] = useState(false);
-//   const {handleLogin} = useContext(AuthContext);
-
-//   const emailRef = useRef();
-//   const passwordRef = useRef();
-
-//   const handleOpenModal = () => setModalOpen(true);
-//   const handleCloseModal = () => setModalOpen(false);
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     const email = emailRef.current.value;
-//     const password = passwordRef.current.value;
-//     try {
-//       await handleLogin(email, password, navigate);
-//     } catch (error) {
-//       console.error('Error al iniciar sesión:', error);
-//       alert('Error al iniciar sesión. Por favor, inténtelo de nuevo.');
-//     }
-//   };
 const Login = () => {
   const navigate = useNavigate();
   const [isModalOpen, setModalOpen] = useState(false);
@@ -43,8 +22,10 @@ const Login = () => {
     try {
       await handleLogin(email, password, navigate);
     } catch (error) {
-      console.error('Error al iniciar sesión:', error);
-      alert('Error al iniciar sesión. Por favor, inténtelo de nuevo.');
+      //console.error('Error al iniciar sesión:', error);
+      //alert('Error al iniciar sesión. Por favor, inténtelo de nuevo.');
+      toast.error('Error al iniciar sesion', error);
+      toast.warning('Error al iniciar sesion. Por favor intentelo de nuevo');
     }
   };
 

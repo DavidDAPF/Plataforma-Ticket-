@@ -18,11 +18,20 @@ const Header = () => {
         <div>
           {user ? (
             <>
-              <Link to="/dashboard" className="font-bold">Dashboard</Link>
-              <Link to="/create-ticket" className="ml-4">Crear Ticket</Link>
+              {/* <Link to="/dashboard" className="font-bold">Dashboard</Link> */}
+              {/* <Link to="/create-ticket" className="ml-4">Crear Ticket</Link> */}
+              {user.role === 'Usuario' && (
+                <Link to="/create-ticket" className="ml-4">Crear Ticket</Link>
+              )}
+              {user.role === 'Soporte' && (
+                <Link to="/support/dashboard" className="ml-4">HomePage</Link>
+              )}
               {/* Mostrar 'Equipos' solo si el usuario es Soporte */}
               {user.role === 'Soporte' && (
                 <Link to="/equipment" className="ml-4">Equipos</Link>
+              )}
+              {user.role === 'Soporte' && (
+                <Link to="/users" className="ml-4">Usuarios</Link>
               )}
               {/* Condicional para mostrar 'Todos los Tickets' o 'Mis Tickets' según el rol */}
               {user.role === 'Soporte' ? (

@@ -21,6 +21,12 @@ const userSchema = mongoose.Schema({
     default: 'Usuario',
   },
 
+  status:{
+    type: String,
+    enum: ['Activo', 'Inactivo'],
+    default: 'Activo',
+  },
+
   //Campo de equipos asignados
   equipmentAssignments: {
     type: [{

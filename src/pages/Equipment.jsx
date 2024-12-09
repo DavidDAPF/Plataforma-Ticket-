@@ -6,13 +6,14 @@ import DeleteEquipmentModal from '../components/equipment/DeleteEquipmentModal.j
 import EquipmentHistoryModal from '../components/equipment/EquipmentHistoryModal.jsx';
 
 const Equipment = () => {
-  const { equipmentList, addEquipment, updateEquipment, deleteEquipment } = useContext(EquipmentContext);
+  const { equipmentList, addEquipment, updateEquipment, deleteEquipment, fetchEquipment } = useContext(EquipmentContext);
   const [isAddModalOpen, setAddModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isHistoryModalOpen, setHistoryModalOpen] = useState(false);
   const [selectedHistory, setSelectedHistory] = useState([]);
   const [selectedEquipment, setSelectedEquipment] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleOpenAddModal = () => setAddModalOpen(true);
   const handleCloseAddModal = () => setAddModalOpen(false);
@@ -36,11 +37,20 @@ const Equipment = () => {
   };
   const handleCloseHistoryModal = () => setHistoryModalOpen(false);
 
+  // Filtrar equipos según el término de búsqueda
+  const filteredEquipment = equipmentList.filter((equipment) => {
+    return (
+      equipment.label?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      equipment.brand?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      equipment.model?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="container mx-auto bg-white p-6 rounded-md shadow-md">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Equipos</h1>
+          <h1 className="text-3xl font-bold">Gestión de Equipos</h1>
           <button
             onClick={handleOpenAddModal}
             className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
@@ -48,14 +58,25 @@ const Equipment = () => {
             Añadir Equipo
           </button>
         </div>
+        {/* Input de búsqueda */}
+        <div className="flex items-center space-x-4 mb-4">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Buscar equipos..."
+            className="px-4 py-2 border rounded-md"
+          />
+        </div>
         <AddEquipmentModal isOpen={isAddModalOpen} onClose={handleCloseAddModal} onAddEquipment={addEquipment} />
-        <EditEquipmentModal isOpen={isEditModalOpen} onClose={handleCloseEditModal} onEditEquipment={updateEquipment} equipment={selectedEquipment} />
+        <EditEquipmentModal isOpen={isEditModalOpen} onClose={handleCloseEditModal} onEditEquipment={updateEquipment} equipment={selectedEquipment} fetchEquipment={fetchEquipment} />
         <DeleteEquipmentModal isOpen={isDeleteModalOpen} onClose={handleCloseDeleteModal} onDeleteEquipment={deleteEquipment} equipment={selectedEquipment} />
         <EquipmentHistoryModal isOpen={isHistoryModalOpen} onClose={handleCloseHistoryModal} history={selectedHistory} />
         <table className="w-full text-left border-collapse">
           <thead>
             <tr>
               <th className="border-b p-4">Etiqueta</th>
+              <th className='border-b p-4'>Estado</th>
               <th className="border-b p-4">Marca</th>
               <th className="border-b p-4">Modelo</th>
               <th className="border-b p-4">Número de Serie</th>
@@ -65,10 +86,13 @@ const Equipment = () => {
             </tr>
           </thead>
           <tbody>
-             {Array.isArray(equipmentList) && equipmentList.length > 0 ? (
-              equipmentList.map((item) => (
+             {/* {Array.isArray(equipmentList) && equipmentList.length > 0 ? (
+              equipmentList.map((item) => ( */}
+              {filteredEquipment.length > 0 ? (
+                filteredEquipment.map((item)=>(
                 <tr key={item._id}>
                   <td className="border-b p-4">{item.label || 'N/A'}</td>
+                  <td className='border-b p-4'>{item.status || 'Sin Estatus'} </td>
                   <td className="border-b p-4">{item.brand || 'N/A'}</td>
                   <td className="border-b p-4">{item.model || 'N/A'}</td>
                   <td className="border-b p-4">{item.serialNumber || 'N/A'}</td>
@@ -86,12 +110,12 @@ const Equipment = () => {
                     >
                       Editar
                     </button>
-                    <button
+                    {/* <button
                       onClick={() => handleOpenDeleteModal(item)}
                       className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 mr-2"
                     >
                       Eliminar
-                    </button>
+                    </button> */}
                     <button
                       onClick={() => handleOpenHistoryModal(item)}
                       className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"

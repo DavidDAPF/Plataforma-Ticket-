@@ -5,9 +5,9 @@ import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend);
 
 const TicketsTimeChart = ({ tickets }) => {
-  const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio'];
+  const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
   const ticketCounts = months.map((month) => {
-    return tickets.filter((ticket) => new Date(ticket.creationDate).toLocaleString('es-ES', { month: 'long' }) === month.toLowerCase()).length;
+    return tickets.filter((ticket) => new Date(ticket.createdAt).toLocaleString('es-ES', { month: 'long' }) === month.toLowerCase()).length;
   });
 
   const data = {
