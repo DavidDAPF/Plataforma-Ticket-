@@ -18,6 +18,7 @@ const MyTickets = () => {
 
 
   const openModal = (ticket) => {
+    console.log("Ticket seleccionado:", ticket); // Verificar el contenido del ticket
     setSelectedTicket(ticket);
     setIsModalOpen(true);
   };

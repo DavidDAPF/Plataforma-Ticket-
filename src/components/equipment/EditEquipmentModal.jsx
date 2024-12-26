@@ -52,31 +52,6 @@ const EditEquipmentModal = ({ isOpen, onClose, onEditEquipment, equipment}) => {
       setStatus(equipment.status || 'inventario');
     }
   }, [equipment]);
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  
-
-  //   //const userToAssign = assignedUser.trim() === '' ? null : assignedUser;
-  
-  //   const updatedData = {
-  //     label,
-  //     brand,
-  //     model,
-  //     serialNumber,
-  //     ipAddress,
-  //     assignedUser: assignedUser || assignedUser?._id || null, // Enviar solo el id en el backend
-  //     status,
-  //   };
-  
-  //   console.log('Datos enviados al backend:', updatedData);
-  //   console.log('Datos enviados:', { ...equipment, label, brand, model, serialNumber, ipAddress, assignedUser });
-  //  //     onEditEquipment({ ...equipment, label, brand, model, serialNumber, ipAddress, assignedUser });
-  //   toast.info('Datos actualizados');
-  
-  //   onEditEquipment(equipment._id,updatedData);
-  //   onClose();
-  // };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -206,8 +181,6 @@ const EditEquipmentModal = ({ isOpen, onClose, onEditEquipment, equipment}) => {
                       onClick={() => setShowUserModal(true)} // Muestra el modal de usuarios
                       className="mt-1 block w-full px-3 py-2 bg-white border shadow-sm border-gray-300 rounded-md text-left"
                   >
-                      {/* {assignedUser ? `Usuario ID: ${assignedUser}` : 'Seleccionar usuario'} */}
-                      {/* {assignedUser && assignedUser.name ? assignedUser.name : 'Seleccionar usuario'} */}
                       {assignedUser
                          ? users.find((user) => user._id === assignedUser)?.name || 'Usuario no encontrado'
                          : 'Seleccionar usuario'}

@@ -1,6 +1,6 @@
 // routes/ticketRoutes.js
 import express from 'express';
-import {getTicketsByUser, createTicket, getTicketById, updateTicket, deleteTicket, addComment,getTickets, closeTicket, reopenTicket } from '../controllers/ticketControllers.js';
+import {getTicketsByUser, createTicket, getTicketById, updateTicket, deleteTicket, addEquipmentToTicket,addComment,getTickets, closeTicket, reopenTicket } from '../controllers/ticketControllers.js';
 import { protect } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
@@ -14,6 +14,8 @@ router.post('/:id/comments', protect, addComment); // Agregar comentario a un ti
 router.get('/user/:userId', protect, getTicketsByUser ); //para obtener los tickets de el id del usaurio
 router.put('/:id/close', protect, closeTicket); //para cerrar el ticket con response
 router.put('/:id/reopen', protect, reopenTicket); // para reabrir el ticket con comment
+router.post('/:id/equipment', protect, addEquipmentToTicket);
+
 
 
 

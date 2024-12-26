@@ -4,9 +4,6 @@ const AddUserForm = ({ onAddUser }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('');
-  //const [age, setAge] = useState('');
-  //const [location, setLocation] = useState('');
-  //const [phoneNumber, setPhoneNumber] = useState('');
   const [status, setStatus] = useState('');
 
   const handleSubmit = (e) => {
@@ -15,9 +12,6 @@ const AddUserForm = ({ onAddUser }) => {
     setName('');
     setEmail('');
     setRole('');
-    //setAge('');
-    //setLocation('');
-    //setPhoneNumber('');
     setStatus('');
   };
 
@@ -56,36 +50,6 @@ const AddUserForm = ({ onAddUser }) => {
           <option value="Soporte">Soporte</option>
         </select>
       </div>
-      {/* <div className="mb-4">
-        <label className="block text-gray-700">Edad</label>
-        <input
-          type="number"
-          value={age}
-          onChange={(e) => setAge(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 bg-white border shadow-sm border-gray-300 rounded-md"
-          required
-        />
-      </div> */}
-      {/* <div className="mb-4">
-        <label className="block text-gray-700">Ubicación</label>
-        <input
-          type="text"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 bg-white border shadow-sm border-gray-300 rounded-md"
-          required
-        />
-      </div> */}
-      {/* <div className="mb-4">
-        <label className="block text-gray-700">Número de Teléfono</label>
-        <input
-          type="tel"
-          value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 bg-white border shadow-sm border-gray-300 rounded-md"
-          required
-        />
-      </div> */}
       <div className="mb-4">
         <label className="block text-gray-700">Estatus</label>
         <select

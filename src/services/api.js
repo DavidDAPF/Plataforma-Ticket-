@@ -1,3 +1,4 @@
+//LEGACY YA NO SE USA
 export const getTickets = async () => {
   return [
     { id: 1, title: 'Problema de red', description: 'No hay conexión a internet.', status: 'abierto' },

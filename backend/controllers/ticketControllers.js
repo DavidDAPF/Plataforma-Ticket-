@@ -4,7 +4,7 @@ import User from '../models/userModel.js';
 import Equipment from '../models/equipmentModel.js';
 //import CreateTicket from '../../src/pages/Tickets.jsx';
 import mongoose from 'mongoose';
-import { response } from 'express';
+import { response } from 'express' ; 
 
 // @desc    Create new ticket
 // @route   POST /api/tickets
@@ -78,7 +78,8 @@ const closeTicket = asyncHandler(async (req, res) => {
    ticket.comments.push({
     user: req.user._id, // ID del técnico
     name: req.user.name,
-    text: `Ticket cerrado: ${response}`, // Texto que explique el cierre
+    //text: `Ticket cerrado: ${response}`, // Texto que explique el cierre
+    text: response,
     createdAt: new Date(),
   });
 
@@ -219,17 +220,6 @@ const updateTicketRelations = async (ticket) => {
 // @desc    Delete ticket
 // @route   DELETE /api/tickets/:id
 // @access  Private
-// const deleteTicket = asyncHandler(async (req, res) => {
-//   const ticket = await Ticket.findById(req.params.id);
-
-//   if (ticket) {
-//     await ticket.remove();
-//     res.json({ message: 'Ticket removido' });
-//   } else {
-//     res.status(404);
-//     throw new Error('Ticket no encontrado');
-//   }
-// });
 const deleteTicket = asyncHandler(async (req, res) => {
   const ticket = await Ticket.findById(req.params.id);
 
@@ -346,6 +336,8 @@ const addEquipmentToTicket = asyncHandler(async (req, res) => {
     throw new Error('Ticket no encontrado.');
   }
 
+
+  
   // Verificar si el equipo ya está asignado al ticket
   // const alreadyAssigned = ticket.equipment.some(
   //   (eq) => eq.toString() === equipmentId

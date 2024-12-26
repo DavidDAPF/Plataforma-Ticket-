@@ -7,22 +7,6 @@ import { toast } from 'react-toastify';
 const PasswordRecoveryModal = ({ isOpen, onClose }) => {
   const { createTicket } = useContext(TicketContext);
   const [email, setEmail] = useState('');
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   createTicket({
-  //     summary: 'Recuperación de contraseña',
-  //     requester: email,
-  //     status: 'Nuevo',
-  //     type: 'Recuperación de contraseña',
-  //     priority: 'Alta',
-  //     channel: 'Web',
-  //     creationDate: new Date().toISOString(),
-  //   });
-  //   onClose();
-  //   alert('Se ha enviado un ticket de recuperación de contraseña.');
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {

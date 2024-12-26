@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { TicketContext } from "../context/TicketContext";
 import { AuthContext } from "../context/AuthContext";
+import SupportTicketModal from "../components/tickets/SupportTicketModal";
 import axios from "axios";
 
 const SupportTickets = () => {
@@ -39,6 +40,47 @@ const SupportTickets = () => {
     }
   };
 
+  //Manejo de los equipos
+  const addEquipmentToTicket = async (ticketId, equipmentId) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:5000/api/tickets/${ticketId}/equipment`,
+        { equipmentId },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
+      setTickets((prevTickets) =>
+        prevTickets.map((ticket) =>
+          ticket._id === ticketId ? response.data : ticket
+        )
+      );
+      fetchTickets(); // Refrescar lista
+    } catch (error) {
+      setError("Error al agregar equipo al ticket.");
+    }
+  };
+  
+  const removeEquipmentFromTicket = async (ticketId, equipmentId) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:5000/api/tickets/${ticketId}/equipment/${equipmentId}`,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
+      setTickets((prevTickets) =>
+        prevTickets.map((ticket) =>
+          ticket._id === ticketId ? response.data : ticket
+        )
+      );
+      fetchTickets(); // Refrescar lista
+    } catch (error) {
+      setError("Error al quitar equipo del ticket.");
+    }
+  };
+  
+
   const handleAssignTicket = async () => {
     if (!assignee) return; // Verificar si se seleccionó un técnico
     console.log("Assignee (ID del técnico seleccionado):", assignee);
@@ -65,31 +107,12 @@ const SupportTickets = () => {
       setError("Error al asignar el ticket. Inténtalo de nuevo.");
     }
   };
-
-  const handleCloseTicket = async () => {
-    try {
-      const response = await axios.put(
-        `http://localhost:5000/api/tickets/${selectedTicket._id}`,
-        { status: "Cerrado" },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      setTickets((prevTickets) =>
-        prevTickets.map((ticket) =>
-          ticket._id === selectedTicket._id ? response.data : ticket
-        )
-      );
-      closeModal();
-    } catch (error) {
-      console.error("Error al cerrar el ticket:", error);
-      setError("Error al cerrar el ticket. Inténtalo de nuevo.");
-    }
+  // Función para abrir el modal con el ticket seleccionado
+  const handleOpenModal = (ticket) => {
+    setSelectedTicket(ticket);
   };
 
-  const closeModal = () => {
+  const handleCloseModal = () => {
     setSelectedTicket(null);
     setAssignee("");
     setError(""); // Limpiar el mensaje de error al cerrar el modal
@@ -119,7 +142,7 @@ const SupportTickets = () => {
                   <td className="border-b p-4">{ticket.title || "Sin título"}</td>
                   <td className="border-b p-4">{ticket.requester?.name || "Sin nombre"}</td>
                   <td
-                    className={`border-b p-4 ${
+                    className={`border-b p-4  font-bold ${
                       ticket.status === "Abierto"
                         ? "text-red-600"
                         : "text-green-600"
@@ -138,7 +161,7 @@ const SupportTickets = () => {
                   </td>
                   <td className="border-b p-4">
                     <button
-                      onClick={() => setSelectedTicket(ticket)}
+                      onClick={() => handleOpenModal(ticket)}
                       className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
                     >
                       Abrir
@@ -156,74 +179,20 @@ const SupportTickets = () => {
           </tbody>
         </table>
       </div>
-      
-      {/* Ventana modal */}
-      {selectedTicket && (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-md shadow-md w-1/2">
-            <h3 className="mb-4" ><strong> Prioridad: </strong> {selectedTicket.priority || "No prioritario"} </h3>
-            {/* <h3> Solicitante: {selectedTicket.requester || "No usuario data"} </h3> */}
-            <h3 className="mb-4" >
-              <strong>Solicitante: </strong> 
-                {selectedTicket.requester && selectedTicket.requester?.name
-                  ? selectedTicket.requester.name
-                  : "No usuario data"}
-            </h3>
-            <h2 className="text-1xl font-bold mb-4">
-              Titulo: {selectedTicket.title || "Sin título"}
-            </h2>
-            <h2 className="mb-4" ><strong>Tipo:</strong> {selectedTicket.type || "Sin tipo asignado" }</h2>
-            <p className="mb-4">
-              <strong>Descripción:</strong>{" "}
-              {selectedTicket.description || "Sin descripción"}
-            </p>
-
-            <div className="mb-4">
-              {/* <label className="block mb-2">Asignar a:</label> */}
-              <p className="mb-4" >
-                <strong>Asignado a:</strong>{" "}
-                {selectedTicket.assignedTo && selectedTicket.assignedTo.name 
-                  ? selectedTicket.assignedTo.name 
-                  : "No Asignado"}
-              </p>
-              <select
-                value={assignee}
-                onChange={(e) => setAssignee(e.target.value)}
-                className="w-full p-2 border rounded-md"
-              >
-                <option value="">Seleccionar técnico...</option>
-                {technicians.map((technician) => (
-                  <option key={technician._id} value={technician._id}>
-                    {technician.name}
-                  </option>
-                ))}
-              </select>
-              <button
-                onClick={handleAssignTicket}
-                className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-              >
-                Asignar
-              </button>
-            </div>
-
-            <div className="mb-4">
-              <button
-                onClick={handleCloseTicket}
-                className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-              >
-                Cerrar Ticket
-              </button>
-            </div>
-
-            <button
-              onClick={closeModal}
-              className="mt-4 bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
-            >
-              Cerrar
-            </button>
-          </div>
-        </div>
-      )}
+      { selectedTicket ? (
+      <SupportTicketModal
+        ticket={selectedTicket}
+        technicians={technicians}
+        onClose={() => setSelectedTicket(null)}
+        //onClose={handleCloseModal}
+        onAssign={handleAssignTicket}
+        //onCloseTicket={handleCloseTicket}
+        onAddEquipment={addEquipmentToTicket}
+        onRemoveEquipment={removeEquipmentFromTicket}
+        error={error}
+      />
+      ): null
+      }
     </div>
   );
 };

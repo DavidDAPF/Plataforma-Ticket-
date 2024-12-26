@@ -3,7 +3,7 @@ import { TicketContext } from '../../context/TicketContext';
 import { toast } from 'react-toastify';
 
 const TicketDetail = ({ ticket, onClose }) => {
-  const {reopenTicket } = useContext(TicketContext);
+  const {reopenTicket} = useContext(TicketContext);
 
   console.log("Datos iniciales del ticket:", ticket);
 
@@ -31,16 +31,11 @@ const TicketDetail = ({ ticket, onClose }) => {
       <p className="mb-4"><strong>Tipo:</strong> {ticket.type}</p>
       <p className="mb-4"><strong>Prioridad:</strong> {ticket.priority}</p>
       <p className="mb-4"><strong>Estado:</strong> {ticket.status}</p>
-      {/* <p className='mb-4'>
-      <strong>Asignado a: </strong>
-        {ticket.assignedTo?.name || "El nombre no esta disponible"}
-      </p> */}
-
       <p className='mb-4'>
         <strong>Asignado a: </strong>
         {ticket.assignedTo && ticket.assignedTo?.name
           ? ticket.assignedTo.name
-          : 'Técnico no asignado'}
+          : 'Técnico no cargado'}
       </p>
 
       <p className="mb-4">

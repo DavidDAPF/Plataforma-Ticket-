@@ -110,12 +110,6 @@ const Equipment = () => {
                     >
                       Editar
                     </button>
-                    {/* <button
-                      onClick={() => handleOpenDeleteModal(item)}
-                      className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 mr-2"
-                    >
-                      Eliminar
-                    </button> */}
                     <button
                       onClick={() => handleOpenHistoryModal(item)}
                       className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"

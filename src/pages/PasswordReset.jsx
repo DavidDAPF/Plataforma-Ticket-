@@ -76,39 +76,6 @@ const PasswordReset = () => {
       </div>
     </div>
   );
-
-  // return (
-  //   <div className="min-h-screen flex items-center justify-center bg-gray-100">
-  //     <div className="bg-white p-6 rounded-md shadow-md w-full max-w-md">
-  //       <h2 className="text-2xl font-bold mb-6">Restablecer Contraseña</h2>
-  //       <form onSubmit={handleSubmit}>
-  //         <div className="mb-4">
-  //           <label className="block mb-2">Nueva Contraseña</label>
-  //           <input
-  //             type="password"
-  //             value={password}
-  //             onChange={(e) => setPassword(e.target.value)}
-  //             className="w-full px-4 py-2 border rounded-md"
-  //             required
-  //           />
-  //         </div>
-  //         <div className="mb-4">
-  //           <label className="block mb-2">Confirmar Contraseña</label>
-  //           <input
-  //             type="password"
-  //             value={confirmPassword}
-  //             onChange={(e) => setConfirmPassword(e.target.value)}
-  //             className="w-full px-4 py-2 border rounded-md"
-  //             required
-  //           />
-  //         </div>
-  //         <button type="submit" className="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
-  //           Restablecer Contraseña
-  //         </button>
-  //       </form>
-  //     </div>
-  //   </div>
-  // );
 };
 
 export default PasswordReset;

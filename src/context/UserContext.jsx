@@ -44,20 +44,6 @@ export const UserProvider = ({ children }) => {
     }
   };
   
-
-  // Agregar un usuario
-  // const addUser = async (user) => {
-  //   try {
-  //     const token = getToken();
-  //     const response = await axios.post( API_URL_AUTH, user, {
-  //       headers: { Authorization: `Bearer ${token}` },
-  //     });
-  //     setUsers([...users, response.data]);
-  //   } catch (err) {
-  //     setError(err.message || 'Error al agregar el usuario');
-  //   }
-  // };
-
   const addUser = async (user) => {
     try {
       const response = await axios.post(API_URL_AUTH, user, {

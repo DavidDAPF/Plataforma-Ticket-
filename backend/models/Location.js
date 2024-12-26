@@ -1,3 +1,4 @@
+// LEGACY - NO SE USA
 import mongoose from 'mongoose';
 
 const LocationSchema = new mongoose.Schema({

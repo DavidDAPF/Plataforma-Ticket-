@@ -9,15 +9,16 @@ export const TicketContext = createContext();
 
 export const TicketProvider = ({ children }) => {
   const [tickets, setTickets] = useState([]);
-  //const { token, user } = useContext(AuthContext);
-  const [error, setError] = useState(null);
-  const { loading, user} = useContext(AuthContext);
+  //const [error, setError] = useState(null);
+  const {user} = useContext(AuthContext);
 
   const fetchTickets = async () => {
     try {
       const token = localStorage.getItem('token'); // Obtén el token del localStorage
       if (!token) {
+        toast.error('No se encontro el token, por favor inicie sesion')
         throw new Error('No se encontró el token. Por favor, inicia sesión.');
+        
       }
   
       const response = await axios.get('http://localhost:5000/api/tickets', {
@@ -26,13 +27,14 @@ export const TicketProvider = ({ children }) => {
         },
       });
   
-      console.log('Datos obtenidos de /api/tickets:', response.data); // Agregar este log
+      //console.log('Datos obtenidos de /api/tickets:', response.data); // Agregar este log
       setTickets(response.data); // Actualiza el estado con los tickets
       //console.log('Tickets cargados correctamente'); // Mensaje en consola (opcional)
       // Mueve el toast fuera del bucle infinito
     } catch (error) {
-      console.error('Error fetching tickets:', error);
       toast.error('Error cargando tickets. Verifica tu sesión.');
+      console.error('Error fetching tickets:', error);
+      
     }
   };
   
@@ -53,6 +55,7 @@ export const TicketProvider = ({ children }) => {
       //setTickets((prevTickets) => [...prevTickets, response.data]);
     } catch (error) {
       console.error('Error creating ticket:', error);
+      toast.error('Hubo un error al crear el ticket por favor llame a soporte', error)
       throw error;
     }
   };
@@ -89,6 +92,7 @@ export const TicketProvider = ({ children }) => {
       alert('Ticket actualizado correctamente');
     } catch (error) {
       console.error('Error updating ticket:', error);
+      toast.error('Error al actualizar el ticket')
       throw error;
     }
   };
@@ -189,10 +193,50 @@ export const TicketProvider = ({ children }) => {
       toast.error('Hubo un problema al intentar reabrir el ticket.');
     }
   };
+
+  const closeTicket = async (ticketId, comment) => {
+    try {
+      const { data } = await axios.put(
+        `http://localhost:5000/api/tickets/${ticketId}/close`,
+        { response: comment }, // El comentario para cerrar el ticket
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        }
+      );
+  
+      // Actualiza la lista de tickets localmente
+      setTickets((prevTickets) =>
+        prevTickets.map((ticket) =>
+          ticket._id === data._id ? data : ticket
+        )
+      );
+  
+      toast.success('El ticket se cerró correctamente.');
+      return data;
+    } catch (error) {
+      console.error('Error al cerrar el ticket:', error);
+      toast.error('Hubo un problema al cerrar el ticket.');
+    }
+  };
+  
   
   
   return (
-    <TicketContext.Provider value={{ tickets,setTickets, fetchTickets, createTicket, updateTicket, fetchTicketsByUser, addEquipmentToTicket, removeEquipmentFromTicket, fetchTechnicians, reopenTicket }}>
+    <TicketContext.Provider 
+      value={{ 
+        tickets,
+        setTickets,
+        fetchTickets,
+        createTicket,
+        updateTicket,
+        fetchTicketsByUser,
+        addEquipmentToTicket,
+        removeEquipmentFromTicket,
+        fetchTechnicians,
+        closeTicket,
+        reopenTicket}}>
       {children}
     </TicketContext.Provider>
   );

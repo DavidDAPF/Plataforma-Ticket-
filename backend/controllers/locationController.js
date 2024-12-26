@@ -1,3 +1,4 @@
+//LEGACY-NO SE USA
 import Location from '../models/Location.js';
 
 export const createLocation = async (req, res) => {

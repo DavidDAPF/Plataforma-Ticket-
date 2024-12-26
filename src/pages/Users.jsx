@@ -112,7 +112,7 @@ const Users = () => {
         <table className="w-full text-left border-collapse mt-4">
           <thead>
             <tr>
-              <th className="border-b p-4">Nombre</th>
+              <th className="border-b p-4">Nombre y Apellido</th>
               <th className="border-b p-4">Correo Electrónico</th>
               <th className="border-b p-4">Rol</th>
               <th className='border-b p-4'>Status</th>
@@ -125,7 +125,13 @@ const Users = () => {
                 <td className="border-b p-4">{user.name}</td>
                 <td className="border-b p-4">{user.email}</td>
                 <td className="border-b p-4">{user.role}</td>
-                <td className='border-b p-4'>{user.status}</td>
+                {/* <td className='border-b p-4'>{user.status}</td> */}
+                <td className={`border-b p-4 ${
+                  user.status === 'Activo' 
+                  ? 'text-green-600 font-bold' 
+                  : 'text-red-600 font-bold'}`}>
+                    {user.status}
+                </td>
                 <td className="border-b p-4">
                   <button
                     onClick={() => handleOpenViewUserModal(user._id)}

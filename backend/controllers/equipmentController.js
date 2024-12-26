@@ -165,25 +165,6 @@ const getEquipmentHistory = asyncHandler(async (req, res) => {
   res.status(200).json(formattedHistory);
 });
 
-
-// const getAllEquipment = asyncHandler(async (req, res) => {
-//   try {
-//     const statusFilter = req.query.status; // Lee el parámetro de consulta 'status'
-//     const equipmentList = statusFilter
-//       ? await Equipment.find({ status: statusFilter })
-//           .populate('assignedUser', 'name email') // Poblamos el usuario asignado
-//           .populate('history.performedBy', 'name email') // Poblamos el performedBy en el historial
-//       : await Equipment.find({})
-//           .populate('assignedUser', 'name email')
-//           .populate('history.performedBy', 'name email');
-
-//     res.status(200).json(equipmentList);
-//   } catch (error) {
-//     console.error('Error fetching equipment:', error);
-//     res.status(500).json({ message: 'Error fetching equipment' });
-//   }
-// });
-
 const getAllEquipment = asyncHandler(async (req, res) => {
   try {
     const equipmentList = await Equipment.find({})
@@ -197,74 +178,7 @@ const getAllEquipment = asyncHandler(async (req, res) => {
     res.status(500).json({ message: 'Error obteniendo equipos', error });
   }
 });
-
-
-// const updateEquipment = asyncHandler(async (req, res) => {
-//   const { id } = req.params;
-//   const updatedData = req.body;
-//   const performedBy = req.user._id;
-
-//   try {
-//     const equipment = await Equipment.findById(id);
-
-//     if (!equipment) {
-//       return res.status(404).json({ message: 'Equipo no encontrado.' });
-//     }
-
-//     const performedByUser = await User.findById(performedBy); // Obtén el usuario que realiza la acción
-
-//     const historyEntry = [];
-
-//     if (updatedData.assignedUser && updatedData.assignedUser !== equipment.assignedUser?.toString()) {
-//       const assignedUser = await User.findById(updatedData.assignedUser); // Obtén datos del usuario asignado
-//       const previousUser = equipment.assignedUser ? await User.findById(equipment.assignedUser) : null; // Usuario anterior
-    
-//       historyEntry.push({
-//         action: equipment.assignedUser ? 'Reasignado a otro usuario' : 'Asignado a un usuario',
-//         performedBy: {
-//           _id: performedByUser._id,
-//           name: performedByUser.name,
-//           email: performedByUser.email,
-//         },
-//         previousState: previousUser
-//           ? `Asignado a ${previousUser.name} (${previousUser.email})`
-//           : 'No asignado',
-//         currentState: `Asignado a ${assignedUser.name} (${assignedUser.email})`,
-//         date: new Date(),
-//       });
-//     }
-    
-
-//     if (updatedData.status && updatedData.status !== equipment.status) {
-//       historyEntry.push({
-//         action: 'Cambiado de estado',
-//         performedBy: {
-//           _id: performedByUser._id,
-//           name: performedByUser.name,
-//           email: performedByUser.email,
-//         },
-//         previousState: equipment.status || 'Sin estado',
-//         currentState: updatedData.status,
-//         date: new Date(),
-//       });
-//     }
-
-//     const updatedEquipment = await Equipment.findByIdAndUpdate(
-//       id,
-//       {
-//         ...updatedData,
-//         ...(historyEntry.length > 0 && { $push: { history: { $each: historyEntry } } }),
-//       },
-//       { new: true, runValidators: true }
-//     );
-
-//     res.status(200).json(updatedEquipment);
-//   } catch (error) {
-//     console.error('Error actualizando equipo:', error);
-//     res.status(500).json({ message: 'Error actualizando equipo.' });
-//   }
-// });
-
+  
 const updateEquipment = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const updatedData = req.body;
@@ -359,13 +273,6 @@ const updateEquipment = asyncHandler(async (req, res) => {
     res.status(500).json({ message: 'Error actualizando equipo.', error });
   }
 });
-
-
-
-
-
-
-
 
 const addEquipmentAssignmentsField = async () => {
   try {

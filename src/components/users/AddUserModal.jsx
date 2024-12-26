@@ -12,10 +12,7 @@ const AddUserModal = ({ isOpen, onClose, onAddUser }) => {
   //const [location, setLocation] = useState('');
   const [status, setStatus] = useState('Activo');
   const [password, setPassword] = useState('');
-  //const [phoneNumber, setPhoneNumber] = useState('');
-  //const [selectedEquipment, setSelectedEquipment] = useState([]);
   const { locations } = useContext(LocationContext);
-  //const { equipmentList } = useContext(EquipmentContext);
 
    // Reiniciar los estados al abrir el modal
    useEffect(() => {
@@ -33,18 +30,6 @@ const AddUserModal = ({ isOpen, onClose, onAddUser }) => {
     onAddUser({ name, email, role, status, password});
     onClose();
   };
-
-  //ESTE CODIGO NO SE USA MANTENERLO COMENTADO
-  // const handleEquipmentChange = (e) => {
-  //   const options = e.target.options;
-  //   const selected = [];
-  //   for (let i = 0, l = options.length; i < l; i++) {
-  //     if (options[i].selected) {
-  //       selected.push(options[i].value);
-  //     }
-  //   }
-  //   setSelectedEquipment(selected);
-  // };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -92,21 +77,6 @@ const AddUserModal = ({ isOpen, onClose, onAddUser }) => {
                 <option value="Soporte">Soporte</option>
               </select>
             </div>
-            {/* <div className="mb-4">
-              <label className="block mb-2">Ubicación</label>
-              <select
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                className="w-full px-4 py-2 border rounded-md"
-              >
-                <option value="">Seleccionar Ubicación</option>
-                {locations.map((loc) => (
-                  <option key={loc.id} value={loc.name}>
-                    {loc.name}
-                  </option>
-                ))}
-              </select>
-            </div> */}
             <div className="mb-4">
               <label className="block mb-2">Estatus</label>
               <select
@@ -118,16 +88,6 @@ const AddUserModal = ({ isOpen, onClose, onAddUser }) => {
                 <option value="Inactivo">Inactivo</option>
               </select>
             </div>
-            {/* <div className="mb-4">
-              <label className="block mb-2">Número de Teléfono</label>
-              <input
-                type="text"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                className="w-full px-4 py-2 border rounded-md"
-                required
-              />
-            </div> */}
             <div className="flex justify-end mt-4">
               <button
                 type="submit"

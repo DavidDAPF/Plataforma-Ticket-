@@ -11,28 +11,6 @@ const CreateTicket = () => {
   const [assignedTo, setAssignedTo] = useState(''); // Nuevo estado para asignar
   const [technicians, setTechnicians] = useState([]); //Estado para los tecnicos disponibles
 
-  // // Cargar técnicos disponibles desde el backend
-  // useEffect(() => {
-  //   const fetchTechnicians = async () => {
-  //     try {
-  //       const { data } = await axios.get('http://localhost:5000/api/users?role=Soporte', {
-  //         headers: {
-  //           Authorization: `Bearer ${localStorage.getItem('token')}`,
-  //         },
-  //       });
-  //       setTechnicians(response.data);
-  //     } catch (error) {
-  //       console.error('Error fetching technicians:', error);
-  //     }
-  //   };
-
-  //   fetchTechnicians();
-  // }, []);
-
-  // const Tickets = () => {
-  //   const [technicians, setTechnicians] = useState([]);
-  //   const [error, setError] = useState(null);
-  
     useEffect(() => {
       const loadTechnicians = async () => {
         try {
@@ -59,14 +37,6 @@ const CreateTicket = () => {
       }
     };
 
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   await createTicket({ title, description, priority, type, assignedTo });
-  //   setTitle('');
-  //   setDescription('');
-  //   setAssignedTo(''); // Limpiar el campo
-  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -18,8 +18,6 @@ const Header = () => {
         <div>
           {user ? (
             <>
-              {/* <Link to="/dashboard" className="font-bold">Dashboard</Link> */}
-              {/* <Link to="/create-ticket" className="ml-4">Crear Ticket</Link> */}
               {user.role === 'Usuario' && (
                 <Link to="/create-ticket" className="ml-4">Crear Ticket</Link>
               )}
@@ -40,7 +38,7 @@ const Header = () => {
                 <Link to="/my-tickets" className="ml-4">Mis Tickets</Link>
               )}
               <button onClick={handleLogoutClick} className="ml-4">
-                Logout
+                Cerrar sesion
               </button>
             </>
           ) : (
@@ -53,5 +51,3 @@ const Header = () => {
 };
 
 export default Header;
-
-
